@@ -69,8 +69,8 @@ node scripts/pet.mjs         # 本地宠物
 - [x] CLI + 零依赖服务 + DSH 插件包装
 - [x] 多皮肤（鲸鱼 / 猫 / 机器人 / 幽灵）
 - [x] 专注计时生产力模式（完成 +5 XP）
-- [x] GitHub Pages 在线 Demo：https://zoahdev.github.io/dsh-pet-evolve/web/pet.html
 - [x] awesome 列表 + 市场收录（PR #623）
+- [ ] 在线 Demo 页（等待独立演示域名）
 - [ ] 与 dsh-rule-evolve 成长报告联动
 
 ## License
