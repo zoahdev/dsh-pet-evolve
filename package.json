@@ -1,0 +1,47 @@
+{
+  "name": "dsh-pet-evolve",
+  "version": "0.1.0",
+  "description": "The pet that grows with your DeepSeek Harness agent: stage evolution from real signals (verified rules, sessions, tool calls), agent-state mirroring, and one-click growth share cards.",
+  "type": "module",
+  "main": "lib/index.js",
+  "bin": {
+    "dsh-pet-evolve": "scripts/pet.mjs"
+  },
+  "files": [
+    "engine",
+    "adapter",
+    "web",
+    "scripts",
+    "lib",
+    "cordis.patch.yml",
+    "README.md",
+    "README.zh.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test": "node --test engine/evolution.test.js adapter/dsh-state.test.js",
+    "build-check": "node scripts/build-check.mjs",
+    "start": "node scripts/pet.mjs",
+    "check": "node --test engine/evolution.test.js adapter/dsh-state.test.js && node scripts/build-check.mjs"
+  },
+  "keywords": [
+    "deepseek-harness",
+    "dsh-plugin",
+    "pet",
+    "agent",
+    "evolution",
+    "gamification"
+  ],
+  "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  },
+  "peerDependencies": {
+    "@deepseek-ai/cordis": "^4.0.1"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  }
+}
