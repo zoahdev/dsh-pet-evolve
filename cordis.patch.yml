@@ -1,0 +1,5 @@
+- insert:
+    - id: pet-evolve
+      name: dsh-pet-evolve
+      config:
+        port: 4173
