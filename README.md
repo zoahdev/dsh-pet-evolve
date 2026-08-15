@@ -69,8 +69,8 @@ The pet reads local files only (session logs and rule files you point it at) and
 - [x] CLI + zero-dependency server + DSH plugin wrapper
 - [x] Multi-pet skins (whale / cat / robot / ghost)
 - [x] Focus-timer productivity mode (+5 XP on completion)
-- [x] Live demo on GitHub Pages: https://zoahdev.github.io/dsh-pet-evolve/web/pet.html
 - [x] Awesome list entry + marketplace listing (PR #623)
+- [ ] Live demo page (waiting on a dedicated demo domain)
 - [ ] Sync with dsh-rule-evolve growth reports
 
 ## License
