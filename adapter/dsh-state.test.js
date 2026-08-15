@@ -3,7 +3,7 @@ import assert from 'node:assert/strict'
 import { mkdtempSync, mkdirSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
-import { collectSignals, readSessionState, readRuleStats } from './dsh-state.js'
+import { collectSignals, readEvolutionRounds, readSessionState, readRuleStats } from './dsh-state.js'
 
 function tempProfile() {
   return mkdtempSync(join(tmpdir(), 'dsh-pet-evolve-'))
@@ -74,6 +74,20 @@ test('collectSignals degrades to zeros when paths are missing', () => {
     assert.equal(signals.toolCalls, 0)
     assert.equal(signals.rulesVerified, 0)
     assert.deepEqual(signals.xpEvents, [])
+  } finally {
+    rmSync(dir, { recursive: true, force: true })
+  }
+})
+
+test('readEvolutionRounds counts Round headings in an EVOLUTION.md', () => {
+  const dir = tempProfile()
+  try {
+    writeFileSync(
+      join(dir, 'EVOLUTION.md'),
+      '# Round 1\n- New rules: 3\n- Verified: yes\n\n## Round 2\n- New rules: 2\n- Verified: yes\n',
+    )
+    assert.equal(readEvolutionRounds(join(dir, 'EVOLUTION.md')), 2)
+    assert.equal(readEvolutionRounds(join(dir, 'missing.md')), 0)
   } finally {
     rmSync(dir, { recursive: true, force: true })
   }
