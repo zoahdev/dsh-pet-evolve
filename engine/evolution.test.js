@@ -59,3 +59,8 @@ test('summarize exposes the share-card fields', () => {
 test('unknown event types are rejected loudly', () => {
   assert.throws(() => applyEvent(initialState(), { type: 'nope' }), /unknown XP event type/)
 })
+
+test('focus_complete grants 5 XP', () => {
+  const state = applyEvent(initialState(), { type: 'focus_complete' })
+  assert.equal(state.xp, 5)
+})
