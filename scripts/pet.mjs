@@ -14,9 +14,10 @@
 import { createPetServer, growthReport } from './server.mjs'
 
 function parseArgs(argv) {
-  const args = { profile: null, report: false }
+  const args = { profile: null, report: false, evolution: null }
   for (let i = 0; i < argv.length; i += 1) {
     if (argv[i] === '--profile') args.profile = argv[i + 1]
+    if (argv[i] === '--evolution') args.evolution = argv[i + 1]
     if (argv[i] === '--report') args.report = true
   }
   return args
@@ -25,13 +26,13 @@ function parseArgs(argv) {
 const args = parseArgs(process.argv.slice(2))
 
 if (args.report) {
-  const report = growthReport(args.profile ?? process.env.DSH_HOME ?? '')
+  const report = growthReport(args.profile ?? process.env.DSH_HOME ?? '', args.evolution)
   console.log(JSON.stringify(report, null, 2))
   process.exit(0)
 }
 
 const PORT = 4173
-const server = createPetServer(args.profile ?? '')
+const server = createPetServer(args.profile ?? '', args.evolution)
 server.listen(PORT, '127.0.0.1', () => {
   console.log(`dsh-pet-evolve: http://127.0.0.1:${PORT}${args.profile ? ` (bound to ${args.profile})` : ''}`)
 })
