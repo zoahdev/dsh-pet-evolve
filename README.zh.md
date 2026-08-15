@@ -26,6 +26,9 @@ npx dsh-pet-evolve
 # 绑定真实 DSH 信号
 npx dsh-pet-evolve --profile ~/.dsh/profiles/web
 
+# 同时统计 dsh-rule-evolve 进化轮次（每轮 +5 XP）
+npx dsh-pet-evolve --profile ~/.dsh/profiles/web --evolution ~/.dsh/profiles/web/EVOLUTION.md
+
 # 无头成长报告
 npx dsh-pet-evolve --report
 ```
@@ -71,7 +74,7 @@ node scripts/pet.mjs         # 本地宠物
 - [x] 专注计时生产力模式（完成 +5 XP）
 - [x] awesome 列表 + 市场收录（PR #623）
 - [ ] 在线 Demo 页（等待独立演示域名）
-- [ ] 与 dsh-rule-evolve 成长报告联动
+- [x] 与 dsh-rule-evolve 进化日志联动（每轮 +5 XP）
 
 ## License
 
