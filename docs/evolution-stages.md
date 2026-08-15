@@ -21,5 +21,6 @@ The pet evolves through five stages as the agent accumulates verified XP:
 | `day_streak` | 50 | reserved |
 | `manual_feed` / `manual_play` | 2 / 3 | local interaction |
 | `focus_complete` | 5 | completed focus-timer session |
+| `evolution_round` | 5 | dsh-rule-evolve EVOLUTION.md round |
 
 Levels: 1 level per 100 XP. Stage transitions are irreversible forward-only.
