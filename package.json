@@ -1,6 +1,6 @@
 {
   "name": "dsh-pet-evolve",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "The pet that grows with your DeepSeek Harness agent: stage evolution from real signals (verified rules, sessions, tool calls), agent-state mirroring, and one-click growth share cards.",
   "type": "module",
   "main": "lib/index.js",
