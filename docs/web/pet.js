@@ -25,6 +25,7 @@ let state = load()
 let skin = loadSkin()
 let agentState = 'idle'
 let rulesVerified = 0
+let rounds = 0
 let bounce = 0
 let mood = 'idle'
 let confetti = []
@@ -74,6 +75,7 @@ function renderStats() {
   $('level').textContent = summary.level
   $('xp').textContent = summary.xp
   $('rules').textContent = rulesVerified
+  $('rounds').textContent = rounds
   $('stateBadge').textContent = agentState
   $('xpFill').style.width = next === null
     ? '100%'
@@ -371,7 +373,7 @@ function exportShareCard() {
   c.fillText(`${stage.name}`, 60, 165)
   c.fillStyle = '#8b93b8'
   c.font = '30px -apple-system, "Segoe UI", sans-serif'
-  c.fillText(`Level ${summary.level} · ${summary.xp} XP · ${rulesVerified} rules verified`, 60, 225)
+  c.fillText(`Level ${summary.level} · ${summary.xp} XP · ${rulesVerified} rules · ${rounds} rounds`, 60, 225)
   c.fillText('https://github.com/zoahdev/dsh-pet-evolve', 60, 580)
   const url = card.toDataURL('image/png')
   const a = document.createElement('a')
@@ -387,6 +389,7 @@ async function refreshSignals() {
     const signals = await response.json()
     agentState = signals.agentState ?? 'idle'
     rulesVerified = signals.rulesVerified ?? 0
+    rounds = signals.rounds ?? 0
     let newState = { ...state }
     for (const event of signals.xpEvents ?? []) {
       const count = Math.min(event.count ?? 1, 100)
