@@ -24,6 +24,7 @@ export const XP_EVENTS = {
   day_streak: 50,
   manual_feed: 2,
   manual_play: 3,
+  focus_complete: 5,
 }
 
 export const XP_PER_LEVEL = 100
