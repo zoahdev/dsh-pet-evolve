@@ -64,3 +64,8 @@ test('focus_complete grants 5 XP', () => {
   const state = applyEvent(initialState(), { type: 'focus_complete' })
   assert.equal(state.xp, 5)
 })
+
+test('evolution_round grants 5 XP', () => {
+  const state = applyEvent(initialState(), { type: 'evolution_round' })
+  assert.equal(state.xp, 5)
+})
