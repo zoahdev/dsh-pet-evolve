@@ -26,6 +26,9 @@ npx dsh-pet-evolve
 # bind real DSH signals from a profile
 npx dsh-pet-evolve --profile ~/.dsh/profiles/web
 
+# also count dsh-rule-evolve evolution rounds (+5 XP each)
+npx dsh-pet-evolve --profile ~/.dsh/profiles/web --evolution ~/.dsh/profiles/web/EVOLUTION.md
+
 # headless growth report
 npx dsh-pet-evolve --report
 ```
@@ -71,7 +74,7 @@ The pet reads local files only (session logs and rule files you point it at) and
 - [x] Focus-timer productivity mode (+5 XP on completion)
 - [x] Awesome list entry + marketplace listing (PR #623)
 - [ ] Live demo page (waiting on a dedicated demo domain)
-- [ ] Sync with dsh-rule-evolve growth reports
+- [x] Sync with dsh-rule-evolve evolution logs (+5 XP per round)
 
 ## License
 
