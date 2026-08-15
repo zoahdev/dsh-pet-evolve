@@ -23,8 +23,10 @@ const MIME = {
   '.svg': 'image/svg+xml',
 }
 
-export function growthReport(profileDir) {
-  const signals = collectSignals(profileDir, defaultPaths(profileDir))
+export function growthReport(profileDir, evolutionOverride) {
+  const paths = defaultPaths(profileDir)
+  if (evolutionOverride) paths.evolutionFile = evolutionOverride
+  const signals = collectSignals(profileDir, paths)
   let state = initialState()
   for (const event of signals.xpEvents) {
     const count = Math.min(event.count ?? 1, 1000)
@@ -33,12 +35,12 @@ export function growthReport(profileDir) {
   return { ...signals, summary: summarize(state) }
 }
 
-export function createPetServer(profileDir = '') {
+export function createPetServer(profileDir = '', evolutionOverride) {
   return createServer((req, res) => {
     const url = new URL(req.url ?? '/', `http://${req.headers.host ?? 'localhost'}`)
     if (url.pathname === '/api/state') {
       res.writeHead(200, { 'content-type': 'application/json' })
-      res.end(JSON.stringify(growthReport(profileDir)))
+      res.end(JSON.stringify(growthReport(profileDir, evolutionOverride)))
       return
     }
     const pathname = url.pathname === '/' ? '/web/pet.html' : url.pathname
