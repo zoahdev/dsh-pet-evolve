@@ -76,6 +76,7 @@ body {
 }
 .hint { color: var(--muted); font-size: 12px; }
 .actions { display: flex; gap: 8px; }
+.actions { flex-wrap: wrap; }
 .actions button {
   flex: 1;
   border: 0;
@@ -87,6 +88,25 @@ body {
   color: white;
   cursor: pointer;
 }
+.skins {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+.skin-label { color: var(--muted); font-size: 12px; }
+.skins button {
+  border: 1px solid #2b3252;
+  background: #12162a;
+  color: var(--text);
+  border-radius: 999px;
+  padding: 6px 10px;
+  font-size: 12px;
+  cursor: pointer;
+}
+.skins button.active { border-color: var(--accent); background: #241b3a; }
+.timer { color: var(--accent2); font-size: 13px; font-weight: 700; margin-left: auto; }
 .actions button:active { transform: translateY(1px); }
 .signals { margin-top: 14px; color: var(--muted); font-size: 12px; }
 footer { margin-top: 14px; color: var(--muted); font-size: 12px; text-align: center; }
