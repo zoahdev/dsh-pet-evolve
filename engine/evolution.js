@@ -25,6 +25,7 @@ export const XP_EVENTS = {
   manual_feed: 2,
   manual_play: 3,
   focus_complete: 5,
+  evolution_round: 5,
 }
 
 export const XP_PER_LEVEL = 100
