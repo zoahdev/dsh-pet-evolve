@@ -1,0 +1,21 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Engine + adapter tests
+        run: node --test engine/evolution.test.js adapter/dsh-state.test.js
+      - name: Build artifacts present
+        run: node scripts/build-check.mjs
+      - name: CLI report smoke
+        run: node scripts/pet.mjs --report
