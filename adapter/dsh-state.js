@@ -15,6 +15,7 @@ export function defaultPaths(profileDir) {
   return {
     sessionsDir: join(profileDir, 'sessions'),
     ruleDir: join(profileDir, 'rules'),
+    evolutionFile: join(profileDir, 'EVOLUTION.md'),
   }
 }
 
@@ -89,17 +90,30 @@ export function readRuleStats(ruleDir) {
   return { rulesVerified: verified, ruleFiles: files.length }
 }
 
+/** Count evolution rounds in a dsh-rule-evolve EVOLUTION.md log. */
+export function readEvolutionRounds(evolutionFile) {
+  try {
+    const text = readFileSync(evolutionFile, 'utf8')
+    return (text.match(/^#+ Round \d+/gmu) ?? []).length
+  } catch {
+    return 0
+  }
+}
+
 export function collectSignals(profileDir, paths = defaultPaths(profileDir)) {
   const session = readSessionState(profileDir, paths)
   const rules = readRuleStats(paths.ruleDir)
+  const rounds = readEvolutionRounds(paths.evolutionFile)
   const xpEvents = []
   for (let i = 0; i < rules.rulesVerified; i += 1) xpEvents.push({ type: 'rule_verified' })
   for (let i = 0; i < session.sessionsCompleted; i += 1) xpEvents.push({ type: 'session_completed' })
   if (session.toolCalls > 0) xpEvents.push({ type: 'tool_call', count: session.toolCalls })
   for (let i = 0; i < session.compactions; i += 1) xpEvents.push({ type: 'compaction' })
+  for (let i = 0; i < rounds; i += 1) xpEvents.push({ type: 'evolution_round' })
   return {
     ...session,
     ...rules,
+    rounds,
     xpEvents,
   }
 }
