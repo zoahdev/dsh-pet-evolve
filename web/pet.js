@@ -5,6 +5,14 @@ const ctx = canvas.getContext('2d')
 const $ = id => document.querySelector(`#${id}`)
 
 const STORE_KEY = 'dsh-pet-evolve:state'
+const SKIN_KEY = 'dsh-pet-evolve:skin'
+const FOCUS_MINUTES = 25
+const SKINS = {
+  whale: { color: '#4f9cf9', accent: '#bfe3ff', ears: 'round', tail: true },
+  cat: { color: '#f28b82', accent: '#ffd7d0', ears: 'pointy', tail: true },
+  robot: { color: '#8b93b8', accent: '#cdd6ff', ears: 'antenna', visor: true },
+  ghost: { color: '#e8e6f5', accent: '#ffffff', ghost: true },
+}
 const FALLBACK_STAGES = {
   egg: { color: '#f4d9c0', name: 'Egg', nameZh: '蛋' },
   baby: { color: '#ffd166', name: 'Baby', nameZh: '幼崽' },
@@ -14,11 +22,13 @@ const FALLBACK_STAGES = {
 }
 
 let state = load()
+let skin = loadSkin()
 let agentState = 'idle'
 let rulesVerified = 0
 let bounce = 0
 let mood = 'idle'
 let confetti = []
+let focus = { active: false, remainingMs: FOCUS_MINUTES * 60 * 1000, timer: null }
 
 function load() {
   try {
@@ -30,6 +40,22 @@ function load() {
 
 function save() {
   localStorage.setItem(STORE_KEY, JSON.stringify({ xp: state.xp, events: state.events ?? [] }))
+}
+
+function loadSkin() {
+  try {
+    const raw = localStorage.getItem(SKIN_KEY)
+    if (raw && SKINS[raw]) return raw
+  } catch { /* default */ }
+  return 'whale'
+}
+
+function setSkin(name) {
+  skin = name
+  localStorage.setItem(SKIN_KEY, name)
+  document.querySelectorAll('.skin').forEach(button => {
+    button.classList.toggle('active', button.dataset.skin === name)
+  })
 }
 
 function addEvent(type) {
@@ -62,7 +88,8 @@ function draw() {
   const h = canvas.height
   ctx.clearRect(0, 0, w, h)
   const stage = stageOf(state.xp).id
-  const color = FALLBACK_STAGES[stage].color
+  const palette = SKINS[skin]
+  const color = stage === 'legend' ? FALLBACK_STAGES.legend.color : palette.color
   const bob = Math.sin(Date.now() / 240) * (agentState === 'working' ? 7 : 3)
   const cx = w / 2
   const cy = h / 2 + bob - bounce
@@ -71,24 +98,25 @@ function draw() {
     drawSad(cx, cy)
   }
   if (stage === 'legend') drawAura(cx, cy)
+  if (focus.active) drawZen(cx, cy)
 
   ctx.save()
   ctx.translate(cx, cy)
   switch (stage) {
     case 'egg':
-      drawEgg(color)
+      drawEgg(color, palette)
       break
     case 'baby':
-      drawBaby(color)
+      drawBaby(color, palette)
       break
     case 'teen':
-      drawTeen(color)
+      drawTeen(color, palette)
       break
     case 'adult':
-      drawAdult(color)
+      drawAdult(color, palette)
       break
     case 'legend':
-      drawLegend(color)
+      drawLegend(color, palette)
       break
   }
   ctx.restore()
@@ -104,12 +132,12 @@ function round(x, y, r) {
   ctx.fill()
 }
 
-function drawEgg(color) {
+function drawEgg(color, palette) {
   ctx.fillStyle = color
   ctx.beginPath()
   ctx.ellipse(0, 20, 52, 66, 0, 0, Math.PI * 2)
   ctx.fill()
-  ctx.fillStyle = '#c9a37f'
+  ctx.fillStyle = palette.accent
   round(-18, -8, 5)
   round(14, 6, 4)
   round(-6, 28, 3)
@@ -122,40 +150,30 @@ function drawEgg(color) {
   ctx.stroke()
 }
 
-function drawBaby(color) {
+function drawBaby(color, palette) {
   ctx.fillStyle = color
-  ctx.beginPath()
-  ctx.arc(-22, -34, 14, 0, Math.PI * 2)
-  ctx.arc(22, -34, 14, 0, Math.PI * 2)
-  ctx.fill()
+  drawEars(palette)
   ctx.beginPath()
   ctx.ellipse(0, 18, 56, 58, 0, 0, Math.PI * 2)
   ctx.fill()
+  if (palette.ghost) drawGhostBottom(0, 76, 56)
+  if (palette.visor) drawVisor()
   drawFace()
 }
 
-function drawTeen(color) {
+function drawTeen(color, palette) {
   ctx.fillStyle = color
-  ctx.beginPath()
-  ctx.moveTo(0, -78)
-  ctx.lineTo(38, -52)
-  ctx.lineTo(26, -26)
-  ctx.lineTo(0, -38)
-  ctx.fill()
+  drawEars(palette, -86, -56)
   ctx.beginPath()
   ctx.ellipse(0, 10, 62, 56, 0, 0, Math.PI * 2)
   ctx.fill()
-  ctx.strokeStyle = color
-  ctx.lineWidth = 8
-  ctx.lineCap = 'round'
-  ctx.beginPath()
-  ctx.moveTo(52, 18)
-  ctx.quadraticCurveTo(86, 26, 70, 56)
-  ctx.stroke()
+  if (palette.tail) drawTail(color)
+  if (palette.ghost) drawGhostBottom(0, 66, 62)
+  if (palette.visor) drawVisor()
   drawFace()
 }
 
-function drawAdult(color) {
+function drawAdult(color, palette) {
   ctx.fillStyle = '#ffd700'
   ctx.beginPath()
   ctx.moveTo(0, -84)
@@ -172,10 +190,12 @@ function drawAdult(color) {
   ctx.beginPath()
   ctx.ellipse(0, 16, 64, 58, 0, 0, Math.PI * 2)
   ctx.fill()
+  if (palette.ghost) drawGhostBottom(0, 74, 64)
+  if (palette.visor) drawVisor()
   drawFace()
 }
 
-function drawLegend(color) {
+function drawLegend(color, palette) {
   ctx.fillStyle = color
   ctx.beginPath()
   ctx.ellipse(0, 12, 60, 54, 0, 0, Math.PI * 2)
@@ -188,7 +208,84 @@ function drawLegend(color) {
   ctx.quadraticCurveTo(30, 0, 6, 6)
   ctx.quadraticCurveTo(-30, 0, -66, -12)
   ctx.fill()
+  if (palette.ghost) drawGhostBottom(0, 66, 60)
+  if (palette.visor) drawVisor()
   drawFace()
+}
+
+function drawEars(palette, y = -34) {
+  ctx.fillStyle = palette.color
+  if (palette.ears === 'pointy') {
+    ctx.beginPath()
+    ctx.moveTo(-34, y - 6)
+    ctx.lineTo(-14, y - 34)
+    ctx.lineTo(-8, y + 2)
+    ctx.closePath()
+    ctx.moveTo(34, y - 6)
+    ctx.lineTo(14, y - 34)
+    ctx.lineTo(8, y + 2)
+    ctx.closePath()
+    ctx.fill()
+  } else if (palette.ears === 'antenna') {
+    ctx.strokeStyle = palette.color
+    ctx.lineWidth = 4
+    ctx.beginPath()
+    ctx.moveTo(-22, y - 2)
+    ctx.lineTo(-22, y - 30)
+    ctx.moveTo(22, y - 2)
+    ctx.lineTo(22, y - 30)
+    ctx.stroke()
+    ctx.fillStyle = palette.accent
+    round(-22, y - 34, 5)
+    round(22, y - 34, 5)
+  } else {
+    ctx.beginPath()
+    ctx.arc(-22, y - 2, 14, 0, Math.PI * 2)
+    ctx.arc(22, y - 2, 14, 0, Math.PI * 2)
+    ctx.fill()
+  }
+}
+
+function drawTail(color) {
+  ctx.strokeStyle = color
+  ctx.lineWidth = 8
+  ctx.lineCap = 'round'
+  ctx.beginPath()
+  ctx.moveTo(52, 18)
+  ctx.quadraticCurveTo(86, 26, 70, 56)
+  ctx.stroke()
+}
+
+function drawGhostBottom(x, y, half) {
+  ctx.fillStyle = SKINS[skin].color
+  ctx.beginPath()
+  ctx.moveTo(x - half, y)
+  for (let i = 0; i < 4; i += 1) {
+    ctx.quadraticCurveTo(x - half + ((i + 0.5) * 2 * half) / 4, y + 14, x - half + ((i + 1) * 2 * half) / 4, y)
+  }
+  ctx.fill()
+}
+
+function drawVisor() {
+  ctx.fillStyle = '#0f1220'
+  ctx.fillRect(-30, -14, 60, 24)
+  ctx.fillStyle = '#4f9cf9'
+  ctx.fillRect(-22, -8, 18, 12)
+  ctx.fillRect(4, -8, 18, 12)
+}
+
+function drawZen(cx, cy) {
+  ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)'
+  ctx.lineWidth = 3
+  ctx.beginPath()
+  ctx.arc(cx, cy - 108, 8, 0, Math.PI * 2)
+  ctx.stroke()
+  ctx.beginPath()
+  ctx.moveTo(cx, cy - 96)
+  ctx.lineTo(cx, cy - 84)
+  ctx.moveTo(cx - 8, cy - 78)
+  ctx.lineTo(cx + 8, cy - 78)
+  ctx.stroke()
 }
 
 function drawFace() {
@@ -310,10 +407,46 @@ async function refreshSignals() {
 
 document.querySelector('#feed').addEventListener('click', () => addEvent('manual_feed'))
 document.querySelector('#play').addEventListener('click', () => addEvent('manual_play'))
+document.querySelector('#focus').addEventListener('click', toggleFocus)
 document.querySelector('#share').addEventListener('click', exportShareCard)
 canvas.addEventListener('click', () => { bounce = 18; mood = 'playful' })
+document.querySelectorAll('.skin').forEach(button => {
+  button.addEventListener('click', () => setSkin(button.dataset.skin))
+})
+
+function toggleFocus() {
+  if (focus.active) {
+    clearInterval(focus.timer)
+    focus.active = false
+    $('timer').textContent = ''
+    return
+  }
+  focus.active = true
+  focus.remainingMs = FOCUS_MINUTES * 60 * 1000
+  $('timer').textContent = formatFocus(focus.remainingMs)
+  focus.timer = setInterval(() => {
+    focus.remainingMs -= 1000
+    $('timer').textContent = formatFocus(focus.remainingMs)
+    if (focus.remainingMs <= 0) {
+      clearInterval(focus.timer)
+      focus.active = false
+      mood = 'happy'
+      bounce = 20
+      addEvent('focus_complete')
+      $('timer').textContent = 'Focus done! 🎉'
+    }
+  }, 1000)
+}
+
+function formatFocus(ms) {
+  const total = Math.max(0, Math.ceil(ms / 1000))
+  const minutes = Math.floor(total / 60)
+  const seconds = total % 60
+  return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`
+}
 
 renderStats()
+setSkin(skin)
 draw()
 refreshSignals()
 setInterval(refreshSignals, 8000)
