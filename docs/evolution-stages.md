@@ -20,5 +20,6 @@ The pet evolves through five stages as the agent accumulates verified XP:
 | `compaction` | 5 | compaction summaries |
 | `day_streak` | 50 | reserved |
 | `manual_feed` / `manual_play` | 2 / 3 | local interaction |
+| `focus_complete` | 5 | completed focus-timer session |
 
 Levels: 1 level per 100 XP. Stage transitions are irreversible forward-only.
