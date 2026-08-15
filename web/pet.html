@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>dsh-pet-evolve · Agent Pet</title>
+  <link rel="stylesheet" href="./pet.css">
+</head>
+<body>
+  <main class="app">
+    <header class="top">
+      <h1>🐋 dsh-pet-evolve</h1>
+      <p class="tagline">The pet that grows with your agent.</p>
+    </header>
+
+    <section class="pet-stage">
+      <canvas id="pet" width="360" height="360" aria-label="Agent pet"></canvas>
+      <div class="state-badge" id="stateBadge">idle</div>
+    </section>
+
+    <section class="stats">
+      <div class="stat"><span class="label">Stage</span><span class="value" id="stage">Egg</span></div>
+      <div class="stat"><span class="label">Level</span><span class="value" id="level">1</span></div>
+      <div class="stat"><span class="label">XP</span><span class="value" id="xp">0</span></div>
+      <div class="stat"><span class="label">Rules</span><span class="value" id="rules">0</span></div>
+    </section>
+
+    <section class="xp-bar">
+      <div class="bar"><div class="fill" id="xpFill"></div></div>
+      <span class="hint" id="xpHint">300 XP to Baby</span>
+    </section>
+
+    <section class="actions">
+      <button id="feed">🍼 Feed</button>
+      <button id="play">🎾 Play</button>
+      <button id="share">📤 Share card</button>
+    </section>
+
+    <section class="signals">
+      <p id="signalNote">Local mode: feed/play only. Run <code>npx dsh-pet-evolve</code> to bind real agent signals.</p>
+    </section>
+
+    <footer>
+      <a href="https://github.com/zoahdev/dsh-pet-evolve">GitHub</a>
+      · zero-dependency · all data stays on your machine
+    </footer>
+  </main>
+  <script type="module" src="./pet.js"></script>
+</body>
+</html>
